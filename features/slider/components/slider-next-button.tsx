@@ -23,7 +23,10 @@ export const SliderNextButton = ({ className }: { className?: string }) => {
 	// Handlers
 	const handleClick = () => {
 		if (emblaApi) {
+			// Pause animation
 			setAnimationPaused(true);
+
+			// Scroll to next slide
 			emblaApi.scrollNext();
 		}
 	};

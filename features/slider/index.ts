@@ -7,6 +7,7 @@
 // Barrel
 export { type SliderAnimationType, type SliderProps, Slider } from '@/features/slider/app-slider';
 
+export { SliderDots } from '@/features/slider/components/slider-dots';
 export { SliderPauseButton } from '@/features/slider/components/slider-pause-button';
 export { SliderPrevButton } from '@/features/slider/components/slider-prev-button';
 export { type SliderContextType, useSliderContext, SliderProvider } from '@/features/slider/components/slider-provider';

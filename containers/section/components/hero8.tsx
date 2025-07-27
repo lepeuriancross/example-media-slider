@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/button';
 
 import { SectionWrapper } from '@/containers/section/components/section-wrapper';
 
-import { Slider, SliderPauseButton, SliderPrevButton, SliderProvider, SliderNextButton } from '@/features/slider/';
+import { Slider, SliderDots, SliderPauseButton, SliderPrevButton, SliderProvider, SliderNextButton } from '@/features/slider/';
 
 // Component(s)
 export const Hero8 = () => {
@@ -78,10 +78,16 @@ export const Hero8 = () => {
 								</div>
 							</Slider>
 							<div data-slot="section-slider-controls" className="px-4 lg:px-6">
-								<div data-slot="section-slider-controls-row" className="flex justify-between max-w-screen-2xl mx-auto">
+								<div data-slot="section-slider-controls-row" className="relative flex justify-between max-w-screen-2xl mx-auto">
 									<div data-slot="section-slider-controls-col" className="inline-flex justify-center items-center gap-2">
 										<SliderPrevButton />
 										<SliderNextButton />
+									</div>
+									<div
+										data-slot="section-slider-controls-col"
+										className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 hidden lg:inline-flex"
+									>
+										<SliderDots />
 									</div>
 									<div data-slot="section-slider-controls-col">
 										<SliderPauseButton />

@@ -23,7 +23,10 @@ export const SliderPrevButton = ({ className }: { className?: string }) => {
 	// Handlers
 	const handleClick = () => {
 		if (emblaApi) {
+			// Pause animation
 			setAnimationPaused(true);
+
+			// Scroll to previous slide
 			emblaApi.scrollPrev();
 		}
 	};
