@@ -23,13 +23,14 @@ export type SliderAnimationType = 'default' | 'autoplay' | 'auto-scroll';
 export type SliderProps = {
 	animation?: SliderAnimationType;
 	loop?: boolean;
+	pauseOnDrag?: boolean;
 	pauseOnHover?: boolean;
 	className?: string;
 	children: React.ReactNode;
 };
 
 // Component(s)
-export const Slider = ({ animation = 'default', loop = false, pauseOnHover = false, className, children }: SliderProps) => {
+export const Slider = ({ animation = 'default', loop = false, pauseOnDrag = false, pauseOnHover = false, className, children }: SliderProps) => {
 	// Refs
 	const viewportRef = useRef<HTMLDivElement>(null);
 
@@ -53,7 +54,7 @@ export const Slider = ({ animation = 'default', loop = false, pauseOnHover = fal
 	const [emblaRef, emblaApi] = useEmblaCarousel({ loop }, plugins);
 
 	// Context
-	const { isHovered, setIsHovered, animationPaused, setCurrentSlide } = useSliderContext();
+	const { animationPaused, setAnimationPaused, setCurrentSlide, setEmblaApi, isHovered, setIsHovered } = useSliderContext();
 
 	// Functions
 	const updateHeight = useCallback(() => {
@@ -71,6 +72,14 @@ export const Slider = ({ animation = 'default', loop = false, pauseOnHover = fal
 	}, [emblaApi, setCurrentSlide]);
 
 	// Hooks
+	useEffect(() => {
+		// If emblaApi is not set, do not proceed
+		if (!emblaApi) return;
+
+		// Set emblaApi in context
+		setEmblaApi(emblaApi);
+	}, [emblaApi, setEmblaApi]);
+
 	useEffect(() => {
 		// If no emblaApi is available, do not proceed
 		if (!emblaApi) return;
@@ -101,42 +110,54 @@ export const Slider = ({ animation = 'default', loop = false, pauseOnHover = fal
 		// If animation type is 'autoplay'...
 		const autoplay = emblaApi?.plugins()?.autoplay;
 		if (autoplay) {
-			console.log('Toggle autoplay:', autoplay);
 			// Toggle autoplay based on animationPaused state
 			if (animationPaused || (pauseOnHover && isHovered)) {
-				console.log('Stop autoplay');
 				autoplay.stop();
-			} else if (!animationPaused) {
-				console.log('Start autoplay');
-				autoplay.reset();
+			} else if (!animationPaused && (!pauseOnHover || !isHovered)) {
+				console.log('Autoplay is active');
+				autoplay.play();
 			}
 		}
 
 		// If animation type is 'auto-scroll'...
 		const autoScroll = emblaApi?.plugins()?.autoScroll;
 		if (autoScroll) {
-			console.log('Toggle autoScroll:', animationPaused, autoScroll.isPlaying());
 			// Toggle auto-scroll based on animationPaused state
 			if (animationPaused || (pauseOnHover && isHovered)) {
-				console.log('Stop auto-scroll');
 				autoScroll.stop();
-			} else if (!animationPaused) {
-				console.log('Start auto-scroll');
+			} else if (!animationPaused && (!pauseOnHover || !isHovered)) {
+				console.log('Auto-scroll is active');
 				autoScroll.play();
 			}
 		}
 	}, [animationPaused, isHovered, pauseOnHover, emblaApi]);
 
+	useEffect(() => {
+		if (!emblaApi || !pauseOnDrag) return;
+
+		const handlePointerDown = () => {
+			setAnimationPaused(true);
+		};
+
+		emblaApi.on('pointerDown', handlePointerDown);
+
+		// Cleanup
+		return () => {
+			emblaApi.off('pointerDown', handlePointerDown);
+		};
+	}, [emblaApi, pauseOnDrag, setAnimationPaused]);
+
 	// Render
 	return (
-		<div
-			data-slot="slider"
-			className={cn('overflow-hidden w-full', className)}
-			ref={emblaRef}
-			onMouseEnter={() => setIsHovered(true)}
-			onMouseLeave={() => setIsHovered(false)}
-		>
-			<div data-slot="slider-viewport" ref={viewportRef} className="flex" style={{ height: maxHeight || 'auto' }}>
+		<div data-slot="slider" className={cn('overflow-hidden w-full', className)} ref={emblaRef}>
+			<div
+				data-slot="slider-viewport"
+				ref={viewportRef}
+				className="flex"
+				style={{ height: maxHeight || 'auto' }}
+				onMouseEnter={() => setIsHovered(true)}
+				onMouseLeave={() => setIsHovered(false)}
+			>
 				{Children.map(children, (child, index) => (
 					<div data-slot="slider-slide" key={index} className="min-w-full shrink-0 grow-0">
 						{child}

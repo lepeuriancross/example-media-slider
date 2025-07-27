@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/button';
 
 import { SectionWrapper } from '@/containers/section/components/section-wrapper';
 
-import { Slider, SliderPauseButton, SliderProvider } from '@/features/slider/';
+import { Slider, SliderPauseButton, SliderPrevButton, SliderProvider, SliderNextButton } from '@/features/slider/';
 
 // Component(s)
 export const Hero8 = () => {
@@ -45,7 +45,7 @@ export const Hero8 = () => {
 					<div data-slot="section-col">
 						{/* Media Slider */}
 						<div data-slot="section-slider-wrapper" className="flex flex-col items-stretch w-dvw -mx-4 gap-6 lg:-mx-6">
-							<Slider animation="auto-scroll" loop pauseOnHover>
+							<Slider animation="autoplay" pauseOnDrag loop>
 								<div data-slot="section-slide">
 									<div data-slot="section-slide-row" className="px-4 lg:px-6">
 										<img
@@ -78,8 +78,14 @@ export const Hero8 = () => {
 								</div>
 							</Slider>
 							<div data-slot="section-slider-controls" className="px-4 lg:px-6">
-								<div data-slot="section-slider-controls-row" className="flex justify-betweenmax-w-screen-2xl mx-auto">
-									<SliderPauseButton />
+								<div data-slot="section-slider-controls-row" className="flex justify-between max-w-screen-2xl mx-auto">
+									<div data-slot="section-slider-controls-col" className="inline-flex justify-center items-center gap-2">
+										<SliderPrevButton />
+										<SliderNextButton />
+									</div>
+									<div data-slot="section-slider-controls-col">
+										<SliderPauseButton />
+									</div>
 								</div>
 							</div>
 						</div>

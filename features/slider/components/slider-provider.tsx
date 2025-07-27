@@ -6,17 +6,22 @@
 
 'use client';
 
-// IMports - scripts (node)
+// Imports - types / config
+import type { EmblaCarouselType } from 'embla-carousel';
+
+// Imports - scripts (node)
 import { createContext, useContext, useState, useEffect } from 'react';
 
 // Types
 export type SliderContextType = {
-	isHovered: boolean;
-	setIsHovered: (hovered: boolean) => void;
-	currentSlide: number;
-	setCurrentSlide: (index: number) => void;
 	animationPaused: boolean;
 	setAnimationPaused: (paused: boolean) => void;
+	currentSlide: number;
+	setCurrentSlide: (index: number) => void;
+	emblaApi?: EmblaCarouselType | null;
+	setEmblaApi: (api: EmblaCarouselType | null) => void;
+	isHovered: boolean;
+	setIsHovered: (hovered: boolean) => void;
 };
 
 // Context
@@ -33,9 +38,10 @@ export const useSliderContext = (): SliderContextType => {
 // Component(s)
 export const SliderProvider = ({ children }: { children: React.ReactNode }) => {
 	// State
-	const [isHovered, setIsHovered] = useState(false);
-	const [currentSlide, setCurrentSlide] = useState(0);
 	const [animationPaused, setAnimationPaused] = useState(false);
+	const [currentSlide, setCurrentSlide] = useState(0);
+	const [emblaApi, setEmblaApi] = useState<EmblaCarouselType | null>(null);
+	const [isHovered, setIsHovered] = useState(false);
 
 	// Hooks
 	useEffect(() => {
@@ -44,12 +50,14 @@ export const SliderProvider = ({ children }: { children: React.ReactNode }) => {
 
 	// Init
 	const value: SliderContextType = {
-		isHovered,
-		setIsHovered,
-		currentSlide,
-		setCurrentSlide,
 		animationPaused,
 		setAnimationPaused,
+		currentSlide,
+		setCurrentSlide,
+		emblaApi,
+		setEmblaApi,
+		isHovered,
+		setIsHovered,
 	};
 
 	// Render default
