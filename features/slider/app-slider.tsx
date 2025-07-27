@@ -23,12 +23,13 @@ export type SliderAnimationType = 'default' | 'autoplay' | 'auto-scroll';
 export type SliderProps = {
 	animation?: SliderAnimationType;
 	loop?: boolean;
+	pauseOnHover?: boolean;
 	className?: string;
 	children: React.ReactNode;
 };
 
 // Component(s)
-export const Slider = ({ loop = false, animation = 'default', className, children }: SliderProps) => {
+export const Slider = ({ animation = 'default', loop = false, pauseOnHover = false, className, children }: SliderProps) => {
 	// Refs
 	const viewportRef = useRef<HTMLDivElement>(null);
 
@@ -52,7 +53,7 @@ export const Slider = ({ loop = false, animation = 'default', className, childre
 	const [emblaRef, emblaApi] = useEmblaCarousel({ loop }, plugins);
 
 	// Context
-	const { animationPaused, setCurrentSlide } = useSliderContext();
+	const { isHovered, setIsHovered, animationPaused, setCurrentSlide } = useSliderContext();
 
 	// Functions
 	const updateHeight = useCallback(() => {
@@ -102,7 +103,7 @@ export const Slider = ({ loop = false, animation = 'default', className, childre
 		if (autoplay) {
 			console.log('Toggle autoplay:', autoplay);
 			// Toggle autoplay based on animationPaused state
-			if (animationPaused) {
+			if (animationPaused || (pauseOnHover && isHovered)) {
 				console.log('Stop autoplay');
 				autoplay.stop();
 			} else if (!animationPaused) {
@@ -116,7 +117,7 @@ export const Slider = ({ loop = false, animation = 'default', className, childre
 		if (autoScroll) {
 			console.log('Toggle autoScroll:', animationPaused, autoScroll.isPlaying());
 			// Toggle auto-scroll based on animationPaused state
-			if (animationPaused) {
+			if (animationPaused || (pauseOnHover && isHovered)) {
 				console.log('Stop auto-scroll');
 				autoScroll.stop();
 			} else if (!animationPaused) {
@@ -124,14 +125,20 @@ export const Slider = ({ loop = false, animation = 'default', className, childre
 				autoScroll.play();
 			}
 		}
-	}, [animationPaused, emblaApi]);
+	}, [animationPaused, isHovered, pauseOnHover, emblaApi]);
 
 	// Render
 	return (
-		<div className={cn('overflow-hidden w-full', className)} ref={emblaRef}>
-			<div ref={viewportRef} className="flex" style={{ height: maxHeight || 'auto' }}>
+		<div
+			data-slot="slider"
+			className={cn('overflow-hidden w-full', className)}
+			ref={emblaRef}
+			onMouseEnter={() => setIsHovered(true)}
+			onMouseLeave={() => setIsHovered(false)}
+		>
+			<div data-slot="slider-viewport" ref={viewportRef} className="flex" style={{ height: maxHeight || 'auto' }}>
 				{Children.map(children, (child, index) => (
-					<div key={index} data-slot="slider-slide" className="min-w-full shrink-0 grow-0">
+					<div data-slot="slider-slide" key={index} className="min-w-full shrink-0 grow-0">
 						{child}
 					</div>
 				))}

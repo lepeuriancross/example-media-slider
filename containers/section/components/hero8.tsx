@@ -45,7 +45,7 @@ export const Hero8 = () => {
 					<div data-slot="section-col">
 						{/* Media Slider */}
 						<div data-slot="section-slider-wrapper" className="flex flex-col items-stretch w-dvw -mx-4 gap-6 lg:-mx-6">
-							<Slider animation="auto-scroll" loop>
+							<Slider animation="auto-scroll" loop pauseOnHover>
 								<div data-slot="section-slide">
 									<div data-slot="section-slide-row" className="px-4 lg:px-6">
 										<img

@@ -11,6 +11,8 @@ import { createContext, useContext, useState, useEffect } from 'react';
 
 // Types
 export type SliderContextType = {
+	isHovered: boolean;
+	setIsHovered: (hovered: boolean) => void;
 	currentSlide: number;
 	setCurrentSlide: (index: number) => void;
 	animationPaused: boolean;
@@ -31,6 +33,7 @@ export const useSliderContext = (): SliderContextType => {
 // Component(s)
 export const SliderProvider = ({ children }: { children: React.ReactNode }) => {
 	// State
+	const [isHovered, setIsHovered] = useState(false);
 	const [currentSlide, setCurrentSlide] = useState(0);
 	const [animationPaused, setAnimationPaused] = useState(false);
 
@@ -40,7 +43,9 @@ export const SliderProvider = ({ children }: { children: React.ReactNode }) => {
 	}, [currentSlide]);
 
 	// Init
-	const value = {
+	const value: SliderContextType = {
+		isHovered,
+		setIsHovered,
 		currentSlide,
 		setCurrentSlide,
 		animationPaused,
