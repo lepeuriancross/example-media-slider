@@ -66,7 +66,7 @@ export const SliderDots = () => {
 				<button
 					key={index}
 					className={cn(
-						'h-3 w-3 rounded-full transition-colors duration-300',
+						'h-2.5 w-2.5 rounded-full transition-colors duration-300',
 						currentSlide === index ? 'bg-foreground' : 'cursor-pointer bg-muted-foreground hover:bg-muted-foreground/50',
 					)}
 					onClick={() => handleClick(index)}

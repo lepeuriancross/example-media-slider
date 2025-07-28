@@ -12,6 +12,8 @@ import { Button } from '@/components/ui/button';
 
 import { SectionWrapper } from '@/containers/section/components/section-wrapper';
 
+import { VideoPlayer } from '@/features/media/components/inline-video';
+
 import { Slider, SliderDots, SliderPauseButton, SliderPrevButton, SliderProvider, SliderNextButton } from '@/features/slider/';
 
 // Component(s)
@@ -41,6 +43,17 @@ export const Hero8 = () => {
 						</div>
 					</div>
 				</div>
+				<VideoPlayer
+					className="block w-full max-w-7xl mx-auto rounded-lg"
+					data={{
+						_type: 'video',
+						variant: 'brightcove',
+						id: '6360358040112',
+						aspectRatio: '16/9',
+						thumbnailStyle: 'posterVideo',
+						metaTitle: 'Inline Video Example',
+					}}
+				/>
 				<div data-slot="section-row">
 					<div data-slot="section-col">
 						{/* Media Slider */}
@@ -48,11 +61,16 @@ export const Hero8 = () => {
 							<Slider animation="autoplay" pauseOnDrag loop>
 								<div data-slot="section-slide">
 									<div data-slot="section-slide-row" className="px-4 lg:px-6">
-										<img
-											data-slot="section-slide-img"
-											className="block w-full max-w-7xl max-h-[700px] mx-auto rounded-lg object-cover"
-											src="https://deifkwefumgah.cloudfront.net/shadcnblocks/block/placeholder-1.svg"
-											alt="placeholder"
+										<VideoPlayer
+											className="block w-full max-w-7xl mx-auto rounded-lg"
+											data={{
+												_type: 'video',
+												variant: 'brightcove',
+												id: '6360358040112',
+												aspectRatio: '16/9',
+												thumbnailStyle: 'posterVideo',
+												metaTitle: 'Inline Video Example',
+											}}
 										/>
 									</div>
 								</div>
@@ -60,17 +78,7 @@ export const Hero8 = () => {
 									<div data-slot="section-slide-row" className="px-4 lg:px-6">
 										<img
 											data-slot="section-slide-img"
-											className="block w-full max-w-7xl max-h-[700px] mx-auto rounded-lg object-cover"
-											src="https://deifkwefumgah.cloudfront.net/shadcnblocks/block/placeholder-1.svg"
-											alt="placeholder"
-										/>
-									</div>
-								</div>
-								<div data-slot="section-slide">
-									<div data-slot="section-slide-row" className="px-4 lg:px-6">
-										<img
-											data-slot="section-slide-img"
-											className="block w-full max-w-7xl max-h-[700px] mx-auto rounded-lg object-cover"
+											className="block w-full max-w-7xl aspect-video mx-auto rounded-lg object-cover"
 											src="https://deifkwefumgah.cloudfront.net/shadcnblocks/block/placeholder-1.svg"
 											alt="placeholder"
 										/>
@@ -78,7 +86,7 @@ export const Hero8 = () => {
 								</div>
 							</Slider>
 							<div data-slot="section-slider-controls" className="px-4 lg:px-6">
-								<div data-slot="section-slider-controls-row" className="relative flex justify-between max-w-screen-2xl mx-auto">
+								<div data-slot="section-slider-controls-row" className="relative flex justify-between max-w-7xl mx-auto">
 									<div data-slot="section-slider-controls-col" className="inline-flex justify-center items-center gap-2">
 										<SliderPrevButton />
 										<SliderNextButton />

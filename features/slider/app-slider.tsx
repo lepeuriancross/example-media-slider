@@ -114,7 +114,6 @@ export const Slider = ({ animation = 'default', loop = false, pauseOnDrag = fals
 			if (animationPaused || (pauseOnHover && isHovered)) {
 				autoplay.stop();
 			} else if (!animationPaused && (!pauseOnHover || !isHovered)) {
-				console.log('Autoplay is active');
 				autoplay.play();
 			}
 		}
@@ -126,7 +125,6 @@ export const Slider = ({ animation = 'default', loop = false, pauseOnDrag = fals
 			if (animationPaused || (pauseOnHover && isHovered)) {
 				autoScroll.stop();
 			} else if (!animationPaused && (!pauseOnHover || !isHovered)) {
-				console.log('Auto-scroll is active');
 				autoScroll.play();
 			}
 		}
@@ -159,7 +157,7 @@ export const Slider = ({ animation = 'default', loop = false, pauseOnDrag = fals
 				onMouseLeave={() => setIsHovered(false)}
 			>
 				{Children.map(children, (child, index) => (
-					<div data-slot="slider-slide" key={index} className="min-w-full shrink-0 grow-0">
+					<div data-slot="slider-slide" key={index} className="min-w-full max-w-dvw shrink-0 grow-0">
 						{child}
 					</div>
 				))}
