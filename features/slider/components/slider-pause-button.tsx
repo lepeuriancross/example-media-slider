@@ -16,12 +16,17 @@ import { Button } from '@/components/ui/button';
 // Component(s)
 export const SliderPauseButton = () => {
 	// Context
-	const { animationPaused, setAnimationPaused } = useSliderContext();
+	const { animationPaused, setAnimationPaused, isPlayingMedia } = useSliderContext();
 
 	// Render default
 	return (
-		<Button className={cn('slider-pause-button', { 'is-paused': animationPaused })} variant="outline" onClick={() => setAnimationPaused(!animationPaused)}>
-			{animationPaused ? 'Resume' : 'Pause'}
+		<Button
+			className={cn('slider-pause-button', { 'is-paused': animationPaused })}
+			variant="outline"
+			disabled={isPlayingMedia}
+			onClick={() => setAnimationPaused(!animationPaused)}
+		>
+			{isPlayingMedia ? 'Playing Media' : animationPaused ? 'Resume' : 'Pause'}
 		</Button>
 	);
 };

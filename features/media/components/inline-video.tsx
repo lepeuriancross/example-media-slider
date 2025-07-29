@@ -10,13 +10,14 @@
 import type { RootState } from '@/redux/store';
 
 // Imports - scripts (node)
-import React, { useState, useEffect, useRef, useImperativeHandle, forwardRef, Ref } from 'react';
+import React, { useMemo, useState, useCallback, useEffect, useRef, useImperativeHandle, forwardRef, Ref } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
 
 // Imports - scripts (local)
 import { cn } from '@/lib/utils';
 import { setCurrentlyPlaying } from '@/features/media/store/media-slice';
+import { useMediaSliderContext } from '@/features/slider/components/slider-provider';
 
 // Imports - components (node)
 import ReactPlayer from 'react-player';
@@ -29,9 +30,8 @@ import { LoadingIcon } from '@/components/ui/loading-icon';
 export type VideoPlayerProps = {
 	data?: VideoPlayerData;
 	className?: string;
-	onReady?: () => void;
-	onPlay?: () => void;
-	onPause?: () => void;
+	onPlay?: (e: { id?: string | null }) => void;
+	onPause?: (e: { id?: string | null }) => void;
 };
 
 export type VideoPlayerData = {
@@ -59,9 +59,9 @@ export type VideoPlayerData = {
 );
 
 export type VideoPlayerHandle = {
-	play: (args: { id: string }) => void;
-	pause: (args: { id: string }) => void;
-	fastSeek: (seconds: number) => void;
+	play: (e?: { id?: string | null }) => void;
+	pause: (e?: { id?: string | null }) => void;
+	seekTo: (seconds: number) => void;
 };
 
 // Settings
@@ -74,9 +74,12 @@ const aspectRatioPadding = {
 };
 
 // Component(s)
-const VideoPlayer = forwardRef(({ data, className, onReady, onPlay, onPause }: VideoPlayerProps, ref: Ref<VideoPlayerHandle>) => {
+const VideoPlayer = forwardRef(({ data, className, onPlay, onPause }: VideoPlayerProps, ref: Ref<VideoPlayerHandle>) => {
+	// Defaults
+	const playerId = useMemo(() => `video-player-${uuidv4()}`, []);
+
 	// Refs
-	const playerId = useRef<string>(null);
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const playerRef = useRef<any>(null);
 
 	// Store
@@ -86,9 +89,13 @@ const VideoPlayer = forwardRef(({ data, className, onReady, onPlay, onPause }: V
 	// State
 	const [error, setError] = useState<string | null>(null);
 	const [isFirstPlay, setIsFirstPlay] = useState<boolean>(true);
+	const [isMounted, setIsMounted] = useState<boolean>(false);
 	const [isPlaying, setIsPlaying] = useState<boolean>(false);
 	const [loading, setLoading] = useState<boolean>(false);
 	const [src, setSrc] = useState<string | null>(null);
+
+	// Context
+	const sliderContext = useMediaSliderContext();
 
 	// Functions
 	const play = () => {
@@ -99,9 +106,8 @@ const VideoPlayer = forwardRef(({ data, className, onReady, onPlay, onPause }: V
 		setIsPlaying(false);
 	};
 
-	const fastSeek = (seconds: number) => {
-		// console.log('Seeking to:', seconds, playerRef.current);
-		// // If no player is available, return early
+	const seekTo = (seconds: number) => {
+		// If no player is available, return early
 		if (!playerRef.current) return;
 
 		// Seek to the specified time
@@ -110,9 +116,16 @@ const VideoPlayer = forwardRef(({ data, className, onReady, onPlay, onPause }: V
 
 	// Hooks
 	useEffect(() => {
-		// Set player ID
-		playerId.current = `video-player-${uuidv4()}`;
+		// Set mounted state
+		setIsMounted(true);
 	}, []);
+
+	useEffect(() => {
+		if (!sliderContext || !playerId) return;
+
+		// Avoid re-adding if already present
+		sliderContext.addMediaId(playerId);
+	}, [playerId, sliderContext]);
 
 	useEffect(() => {
 		// Defaults
@@ -198,17 +211,17 @@ const VideoPlayer = forwardRef(({ data, className, onReady, onPlay, onPause }: V
 	}, [data]);
 
 	useEffect(() => {
-		if (currentlyPlaying !== playerId.current) {
+		if (currentlyPlaying !== playerId) {
 			// Pause the video
 			pause();
 
 			// Reset to first play state
-			fastSeek(0);
+			seekTo(0);
 
 			// Reset is first play state
 			setIsFirstPlay(true);
 		}
-	}, [currentlyPlaying]);
+	}, [currentlyPlaying, playerId]);
 
 	// Handlers
 	const handlePosterClick = () => {
@@ -218,30 +231,52 @@ const VideoPlayer = forwardRef(({ data, className, onReady, onPlay, onPause }: V
 
 	const handlePlay = () => {
 		// Dispatch as currently playing video
-		if (playerId.current) {
-			dispatch(setCurrentlyPlaying(playerId.current));
+		if (playerId) {
+			dispatch(setCurrentlyPlaying(playerId));
 		}
 
 		// Callback
-		onPlay?.();
+		onPlay?.({ id: playerId });
 	};
 
 	const handlePause = () => {
 		// Callback
-		onPause?.();
+		onPause?.({ id: playerId });
 	};
 
 	// Imperative handle
 	useImperativeHandle(ref, () => ({
 		play,
 		pause,
-		fastSeek,
+		seekTo,
 	}));
+
+	// If not mounted, return null
+	if (!isMounted) return null;
+
+	// If error is present, render error state
+	if (error)
+		return (
+			<div data-slot="inline-player" id={playerId ?? undefined} className={cn(`relative w-full overflow-hidden`, className)}>
+				<div
+					data-slot="inline-player-padding"
+					className="relative z-10 w-full"
+					style={{
+						paddingTop:
+							data?.aspectRatio && data.aspectRatio in aspectRatioPadding ? aspectRatioPadding[data.aspectRatio] : aspectRatioPadding.default,
+					}}
+				/>
+				<div className="absolute z-20 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
+					<p className="text-red-500">{error}</p>
+					<p className="text-sm text-gray-500">Please try again later.</p>
+				</div>
+			</div>
+		);
 
 	// If no source is available, render a loading state
 	if (!src)
 		return (
-			<div data-slot="inline-player" id={playerId.current ?? undefined} className={cn(`relative w-full overflow-hidden`, className)}>
+			<div data-slot="inline-player" id={playerId ?? undefined} className={cn(`relative w-full overflow-hidden`, className)}>
 				<div
 					data-slot="inline-player-padding"
 					className="relative z-10 w-full"
@@ -256,7 +291,7 @@ const VideoPlayer = forwardRef(({ data, className, onReady, onPlay, onPause }: V
 
 	// Render default
 	return (
-		<div data-slot="inline-player" id={playerId.current ?? undefined} className={cn(`relative w-full overflow-hidden`, className)}>
+		<div data-slot="inline-player" id={playerId ?? undefined} className={cn(`relative w-full overflow-hidden`, className)}>
 			<div
 				data-slot="inline-player-padding"
 				className="relative z-10 w-full"
@@ -300,7 +335,7 @@ export function VideoPlayerPosterVideo({ src, aspectRatio = '16/9', onClick }: {
 		<button
 			data-slot="inline-player-poster-video"
 			className="absolute z-20 flex flex-col justify-center items-center inset-0 group cursor-pointer"
-			onClick={onClick}
+			onMouseDown={onClick}
 		>
 			<CoverAspectBox
 				aspect={aspectRatio.split('/').map(Number) as [number, number]}

@@ -67,7 +67,7 @@ export const SliderDots = () => {
 					key={index}
 					className={cn(
 						'h-2.5 w-2.5 rounded-full transition-colors duration-300',
-						currentSlide === index ? 'bg-foreground' : 'cursor-pointer bg-muted-foreground hover:bg-muted-foreground/50',
+						currentSlide === index ? 'bg-primary' : 'cursor-pointer bg-primary/30 hover:bg-muted-foreground/50',
 					)}
 					onClick={() => handleClick(index)}
 					aria-label={`Go to slide ${index + 1}`}

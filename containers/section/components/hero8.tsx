@@ -20,43 +20,31 @@ import { Slider, SliderDots, SliderPauseButton, SliderPrevButton, SliderProvider
 export const Hero8 = () => {
 	// Render default
 	return (
-		<SliderProvider>
-			<SectionWrapper classNameContainer="flex flex-col items-stretch gap-24">
-				<div data-slot="section-row">
-					<div data-slot="section-col" className="mx-auto flex max-w-5xl flex-col items-center">
-						<div data-slot="section-text-wrapper" className="z-10 items-center text-center">
-							<h1 className="mb-8 text-4xl font-semibold text-pretty lg:text-7xl">Build faster with Shadcnblocks</h1>
-							<p className="mx-auto max-w-3xl text-muted-foreground lg:text-xl">
-								Lorem ipsum dolor sit amet consectetur adipisicing elit. Elig doloremque mollitia fugiat omnis! Porro facilis quo animi
-								consequatur. Explicabo.
-							</p>
-							<div className="mt-12 flex w-full flex-col justify-center gap-2 sm:flex-row">
-								<Button>
-									Get started now
-									<ChevronRight className="ml-2 h-4" />
-								</Button>
-								<Button variant="ghost">
-									Learn more
-									<ChevronRight className="ml-2 h-4" />
-								</Button>
-							</div>
+		<SectionWrapper classNameContainer="flex flex-col items-stretch gap-24">
+			<div data-slot="section-row">
+				<div data-slot="section-col" className="mx-auto flex max-w-5xl flex-col items-center">
+					<div data-slot="section-text-wrapper" className="z-10 items-center text-center">
+						<h1 className="mb-8 text-4xl font-semibold text-pretty lg:text-7xl">Build faster with Shadcnblocks</h1>
+						<p className="mx-auto max-w-3xl text-muted-foreground lg:text-xl">
+							Lorem ipsum dolor sit amet consectetur adipisicing elit. Elig doloremque mollitia fugiat omnis! Porro facilis quo animi consequatur.
+							Explicabo.
+						</p>
+						<div className="mt-12 flex w-full flex-col justify-center gap-2 sm:flex-row">
+							<Button>
+								Get started now
+								<ChevronRight className="ml-2 h-4" />
+							</Button>
+							<Button variant="ghost">
+								Learn more
+								<ChevronRight className="ml-2 h-4" />
+							</Button>
 						</div>
 					</div>
 				</div>
-				<VideoPlayer
-					className="block w-full max-w-7xl mx-auto rounded-lg"
-					data={{
-						_type: 'video',
-						variant: 'brightcove',
-						id: '6360358040112',
-						aspectRatio: '16/9',
-						thumbnailStyle: 'posterVideo',
-						metaTitle: 'Inline Video Example',
-					}}
-				/>
-				<div data-slot="section-row">
-					<div data-slot="section-col">
-						{/* Media Slider */}
+			</div>
+			<div data-slot="section-row">
+				<div data-slot="section-col">
+					<SliderProvider>
 						<div data-slot="section-slider-wrapper" className="flex flex-col items-stretch w-dvw -mx-4 gap-6 lg:-mx-6">
 							<Slider animation="autoplay" pauseOnDrag loop>
 								<div data-slot="section-slide">
@@ -103,9 +91,9 @@ export const Hero8 = () => {
 								</div>
 							</div>
 						</div>
-					</div>
+					</SliderProvider>
 				</div>
-			</SectionWrapper>
-		</SliderProvider>
+			</div>
+		</SectionWrapper>
 	);
 };
